@@ -27,13 +27,13 @@ app.post('/api/sensores', async (req, res) => {
     const { tds, ph, oxigeno } = req.body;
 
     // Verificar que los datos son números
+    console.log('Received data:', req.body);
+    console.log('Data types:', typeof tds, typeof ph, typeof oxigeno);
+
     if (typeof tds !== 'number' || typeof ph !== 'number' || typeof oxigeno !== 'number') {
       console.log('Invalid data types:', typeof tds, typeof ph, typeof oxigeno);
       return res.status(400).send('Invalid data format');
     }
-
-    console.log('Received data:', req.body);
-    console.log('Data types:', typeof tds, typeof ph, typeof oxigeno);
 
     const newSensor = await pool.query(
       'INSERT INTO sensores (tds, ph, oxigeno) VALUES($1, $2, $3) RETURNING *',
