@@ -25,6 +25,7 @@ app.get('/api/sensores', async (req, res) => {
 // Ruta para añadir datos de sensores
 app.post('/api/sensores', async (req, res) => {
   try {
+    console.log('Received data:', req.body);  // Añadir esta línea para verificar los datos recibidos
     const { tds, ph, oxigeno } = req.body;
     const newSensor = await pool.query(
       'INSERT INTO sensores (tds, ph, oxigeno) VALUES($1, $2, $3) RETURNING *',
