@@ -1,5 +1,7 @@
+// index.js (backend)
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const pool = require('./db');
 require('dotenv').config();
@@ -11,6 +13,19 @@ app.use(cors({
   origin: ['http://localhost:3000', 'https://aquatic-frontend.onrender.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
+}));
+
+// Configurar Helmet para establecer la cabecera CSP
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", "https://aquatic-backend.onrender.com"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'"],
+      imgSrc: ["'self'", "data:"]
+    }
+  }
 }));
 
 app.use(bodyParser.json());
