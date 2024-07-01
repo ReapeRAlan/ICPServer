@@ -1,3 +1,4 @@
+// index.js
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -8,10 +9,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://icp-api.io'],
-  methods: ['GET', 'POST'],
+  origin: ['http://localhost:3000', 'https://aquatic-backend.onrender.com'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
 }));
+
 app.use(bodyParser.json());
 
 // Ruta para obtener datos de sensores
