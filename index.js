@@ -2,12 +2,29 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const pool = require('./db');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Configurar Helmet para los encabezados de seguridad, incluyendo CSP
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://aquatic-backend.onrender.com"],
+      connectSrc: ["'self'", "https://aquatic-backend.onrender.com"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+}));
+
+// Configurar CORS
 app.use(cors({
   origin: ['http://localhost:3000', 'https://aquatic-backend.onrender.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
