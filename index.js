@@ -1,4 +1,4 @@
-// index.js en tu servidor backend
+// index.js (backend)
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -8,11 +8,10 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Permitir solicitudes desde cualquier origen
 app.use(cors());
 app.use(bodyParser.json());
 
-// Rutas de tu API
+// Ruta para obtener datos de sensores
 app.get('/api/sensores', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM sensores');
