@@ -1,9 +1,9 @@
-// index.js (backend)
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const pool = require('./db');
+const { check, validationResult } = require('express-validator');
 require('dotenv').config();
 
 const app = express();
@@ -40,7 +40,16 @@ app.get('/api/sensores', async (req, res) => {
   }
 });
 
-app.post('/api/sensores', async (req, res) => {
+app.post('/api/sensores', [
+  check('tds').isFloat({ min: 0 }).withMessage('TDS must be a positive number'),
+  check('ph').isFloat({ min: 0, max: 14 }).withMessage('pH must be between 0 and 14'),
+  check('oxigeno').isFloat({ min: 0 }).withMessage('Oxygen must be a positive number')
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const { tds, ph, oxigeno } = req.body;
     const newSensor = await pool.query(
@@ -52,6 +61,11 @@ app.post('/api/sensores', async (req, res) => {
     console.error('Error inserting sensor data:', err);
     res.status(500).send('Server Error');
   }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 app.listen(PORT, () => {
