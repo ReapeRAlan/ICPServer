@@ -63,6 +63,17 @@ app.post('/api/sensores', [
   }
 });
 
+// Ruta para eliminar todos los registros
+app.delete('/api/sensores', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM sensores');
+    res.status(200).send('All sensor records deleted');
+  } catch (err) {
+    console.error('Error deleting sensor data:', err);
+    res.status(500).send('Server Error');
+  }
+});
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
