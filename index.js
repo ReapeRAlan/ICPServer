@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
-const pool = require('./db');
+const db = require('./db'); // Cambié `pool` por `db`
 const { check, validationResult } = require('express-validator');
 require('dotenv').config();
 
@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 // Ruta para obtener datos de sensores
 app.get('/api/sensores', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM sensores');
+    const result = await db.query('SELECT * FROM sensores'); // Cambié `pool` por `db`
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching sensor data:', err);
@@ -56,14 +56,14 @@ app.post('/api/sensores', [
     const { tds, ph, oxigeno, prediccion_calidad } = req.body;
 
     // Insertar en la tabla sensores
-    const newSensor = await pool.query(
+    const newSensor = await db.query( // Cambié `pool` por `db`
       'INSERT INTO sensores (tds, ph, oxigeno) VALUES($1, $2, $3) RETURNING *',
       [tds, ph, oxigeno]
     );
 
     // Insertar los resultados del análisis si se proporciona el valor `prediccion_calidad`
     if (prediccion_calidad) {
-      await pool.query(
+      await db.query( // Cambié `pool` por `db`
         'INSERT INTO resultados_analisis (tds, ph, oxigeno, prediccion_calidad) VALUES ($1, $2, $3, $4)',
         [tds, ph, oxigeno, prediccion_calidad]
       );
@@ -79,7 +79,7 @@ app.post('/api/sensores', [
 // Ruta para eliminar todos los registros de la tabla sensores
 app.delete('/api/sensores', async (req, res) => {
   try {
-    await pool.query('DELETE FROM sensores');
+    await db.query('DELETE FROM sensores'); // Cambié `pool` por `db`
     res.status(200).send('All sensor records deleted');
   } catch (err) {
     console.error('Error deleting sensor data:', err);
@@ -90,7 +90,7 @@ app.delete('/api/sensores', async (req, res) => {
 // Ruta para obtener resultados del análisis
 app.get('/api/resultados_analisis', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM resultados_analisis');
+    const result = await db.query('SELECT * FROM resultados_analisis'); // Cambié `pool` por `db`
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching analysis results:', err);
@@ -101,7 +101,7 @@ app.get('/api/resultados_analisis', async (req, res) => {
 // Ruta para eliminar todos los registros de la tabla resultados_analisis
 app.delete('/api/resultados_analisis', async (req, res) => {
   try {
-    await pool.query('DELETE FROM resultados_analisis');
+    await db.query('DELETE FROM resultados_analisis'); // Cambié `pool` por `db`
     res.status(200).send('All analysis records deleted');
   } catch (err) {
     console.error('Error deleting analysis results:', err);
@@ -117,16 +117,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-// db.js
-const { Pool } = require('pg');
-require('dotenv').config();
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-
-module.exports = pool;
